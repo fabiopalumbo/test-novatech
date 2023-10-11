@@ -5,29 +5,9 @@ variable "region" {
   description = "Region to where the resources will be deployed"
 }
 
-variable "s3_name" {
+variable "docker_name" {
   type        = string
-  description = "S3 Bucket name"
-}
-
-variable "vpc_cidr" {
-  type        = string
-  description = "VPC CIDR"
-}
-
-variable "docker_inventory" {
-  type        = string
-  description = "Docker image for inventory"
-}
-
-variable "docker_accounting" {
-  type        = string
-  description = "Docker image for accounting"
-}
-
-variable "docker_shipping" {
-  type        = string
-  description = "Docker image for shipping"
+  description = "Docker image name"
 }
 
 variable "ecs_cluster" {
@@ -40,43 +20,19 @@ variable "ecs_capacity_provider" {
   description = "ECS Capacity Provider name"
 }
 
-variable "task_accounting" {
+variable "task_definition_name" {
   type        = string
-  description = "Task definition for accounting"
+  description = "Task definition name"
 }
 
-variable "task_inventory" {
+variable "image_uri" {
   type        = string
-  description = "Task definition for inventory"
+  description = "Image uri for Task Definition"
 }
 
-variable "task_shipping" {
+variable "vpc_cidr" {
   type        = string
-  description = "Task definition for shipping"
-}
-
-variable "db_name" {
-  type        = string
-  description = "Database name"
-}
-
-variable "db_engine" {
-  type        = string
-  description = "Database engine"
-}
-
-variable "image_accounting" {
-  type        = string
-  description = "Image for accounting"
-}
-  
-variable "image_shipping" {
-  type        = string
-  description = "Image for shipping"
-}
-  
-variable "image_inventory" {
-  type        = string
-  description = "Image for inventory"
+  description = "VPC CIDR"
+  default     = "10.0.0.0/16"
 }
   
