@@ -69,14 +69,14 @@ variable "image_accounting" {
   type        = string
   description = "Image for accounting"
 }
-  
+
 variable "image_shipping" {
   type        = string
   description = "Image for shipping"
 }
-  
+
 variable "image_inventory" {
   type        = string
   description = "Image for inventory"
 }
-  
+

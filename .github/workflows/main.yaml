@@ -54,7 +54,7 @@ jobs:
       id: apply
       run: terraform apply -no-color         
 
-   - name: Login to Amazon ECR
+    - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 

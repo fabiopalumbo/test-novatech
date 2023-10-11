@@ -120,8 +120,8 @@ resource "aws_ecs_cluster_capacity_providers" "example" {
 
 # ECS Task Definition
 
-resource "aws_ecs_task_definition" "inventory" {
-  family             = var.task_inventory
+resource "aws_ecs_task_definition" "task_definition" {
+  family             = var.task_definition_name
   network_mode       = "awsvpc"
   execution_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
   cpu                = 256
@@ -132,7 +132,7 @@ resource "aws_ecs_task_definition" "inventory" {
   container_definitions = jsonencode([
     {
       name      = "inventory"
-      image     = "${var.image_inventory}"
+      image     = "${var.image_uri}"
       cpu       = 256
       memory    = 512
       essential = true
@@ -146,136 +146,13 @@ resource "aws_ecs_task_definition" "inventory" {
     }
   ])
 }
-
-resource "aws_ecs_task_definition" "accounting" {
-  family             = var.task_accounting
-  network_mode       = "awsvpc"
-  execution_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
-  cpu                = 256
-  runtime_platform {
-    operating_system_family = "LINUX"
-    cpu_architecture        = "X86_64"
-  }
-  container_definitions = jsonencode([
-    {
-      name      = "inventory"
-      image     = "${var.image_accounting}"
-      cpu       = 256
-      memory    = 512
-      essential = true
-      portMappings = [
-        {
-          containerPort = 80
-          hostPort      = 80
-          protocol      = "tcp"
-        }
-      ]
-    }
-  ])
-}
-
-resource "aws_ecs_task_definition" "shipping" {
-  family             = var.task_shipping
-  network_mode       = "awsvpc"
-  execution_role_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ecsTaskExecutionRole"
-  cpu                = 256
-  runtime_platform {
-    operating_system_family = "LINUX"
-    cpu_architecture        = "X86_64"
-  }
-  container_definitions = jsonencode([
-    {
-      name      = "shipping"
-      image     = "${var.image_shipping}"
-      cpu       = 256
-      memory    = 512
-      essential = true
-      portMappings = [
-        {
-          containerPort = 80
-          hostPort      = 80
-          protocol      = "tcp"
-        }
-      ]
-    }
-  ])
-}
-
 
 # ECS service
 
-resource "aws_ecs_service" "ecs_service_inventory" {
+resource "aws_ecs_service" "ecs_service" {
   name            = "my-ecs-service"
   cluster         = aws_ecs_cluster.ecs_cluster.id
-  task_definition = aws_ecs_task_definition.inventory.id
-  desired_count   = 2
-
-  network_configuration {
-    subnets         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
-    security_groups = [aws_security_group.security_group.id]
-  }
-
-  force_new_deployment = true
-  placement_constraints {
-    type = "distinctInstance"
-  }
-
-  triggers = {
-    redeployment = timestamp()
-  }
-
-  capacity_provider_strategy {
-    capacity_provider = aws_ecs_capacity_provider.ecs_capacity_provider.name
-    weight            = 100
-  }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.ecs_tg.arn
-    container_name   = "dockergs"
-    container_port   = 80
-  }
-
-  depends_on = [aws_autoscaling_group.ecs_asg]
-}
-
-resource "aws_ecs_service" "ecs_service_accounting" {
-  name            = "my-ecs-service"
-  cluster         = aws_ecs_cluster.ecs_cluster.id
-  task_definition = aws_ecs_task_definition.accounting.id
-  desired_count   = 2
-
-  network_configuration {
-    subnets         = [aws_subnet.subnet.id, aws_subnet.subnet2.id]
-    security_groups = [aws_security_group.security_group.id]
-  }
-
-  force_new_deployment = true
-  placement_constraints {
-    type = "distinctInstance"
-  }
-
-  triggers = {
-    redeployment = timestamp()
-  }
-
-  capacity_provider_strategy {
-    capacity_provider = aws_ecs_capacity_provider.ecs_capacity_provider.name
-    weight            = 100
-  }
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.ecs_tg.arn
-    container_name   = "dockergs"
-    container_port   = 80
-  }
-
-  depends_on = [aws_autoscaling_group.ecs_asg]
-}
-
-resource "aws_ecs_service" "ecs_service_shipping" {
-  name            = "my-ecs-service"
-  cluster         = aws_ecs_cluster.ecs_cluster.id
-  task_definition = aws_ecs_task_definition.shipping.id
+  task_definition = aws_ecs_task_definition.task_definition.id
   desired_count   = 2
 
   network_configuration {
